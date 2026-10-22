@@ -278,6 +278,56 @@
             text-transform: uppercase;
         }
 
+        /* Sammenklappelige sektioner */
+        .fold > summary {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .fold > summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .fold > summary:hover {
+            background: rgba(255,255,255,0.14);
+        }
+
+        .fold > summary::after {
+            content: "+";
+            font-family: var(--font-body);
+            font-size: 1.3rem;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .fold[open] > summary::after {
+            transform: rotate(45deg);
+        }
+
+        .fold-hint {
+            margin-left: auto;
+            white-space: nowrap;
+            font-family: var(--font-body);
+            font-size: 0.68rem;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            color: var(--muted);
+        }
+
+        .fold-sponsor {
+            padding: 4px 8px 8px;
+        }
+
+        .fold-sponsor .sponsor-tag {
+            position: static;
+            display: inline-block;
+        }
+
         ul {
             list-style: none;
             padding: 0;
@@ -574,8 +624,9 @@
                 </li>
             </ul>
 
-            <div class="section-title">Værelse-rundfart starter 19:30</div>
-            <ul>
+            <details class="fold">
+                <summary class="section-title">Værelse-rundfart starter 19:30 <span class="fold-hint">15 værelser</span></summary>
+                <ul>
                 <li><span class="time">19:30 - 19:35</span><span class="event">Christoffer Værelse</span></li>
                 <li><span class="time">19:35 - 19:40</span><span class="event">Helena Værelse</span></li>
                 <li><span class="time">19:40 - 19:45</span><span class="event">Tobias M. Værelse</span></li>
@@ -591,15 +642,13 @@
                 <li><span class="time">20:35 - 20:40</span><span class="event">Jakob Værelse</span></li>
                 <li><span class="time">20:40 - 20:45</span><span class="event">Caroline Værelse</span></li>
                 <li><span class="time">20:45 - 20:50</span><span class="event">Alexander Værelse</span></li>
-            </ul>
+                </ul>
+            </details>
 
-            <div class="ticker">
-                <span class="time">TDC</span>
-                <span class="sponsor-tag">sponsoreret af Helena &amp; Carl Johann</span>
-            </div>
-
-            <div class="section-title">vi starter med legene kl 21:00</div>
-            <ul>
+            <details class="fold">
+                <summary class="section-title">TDC · legene starter 21:00 <span class="fold-hint">9 hold</span></summary>
+                <div class="fold-sponsor"><span class="sponsor-tag">sponsoreret af Helena &amp; Carl Johann</span></div>
+                <ul>
                 <li><span class="time">45 min</span><span class="event">Caroline &amp; Tobias</span></li>
                 <li><span class="time">45 min</span><span class="event">Christoffer &amp; Jonathan</span></li>
                 <li>
@@ -612,7 +661,8 @@
                 <li><span class="time">45 min</span><span class="event">Isabella</span></li>
                 <li><span class="time">45 min</span><span class="event">Karl Emil</span></li>
                 <li><span class="time">45 min</span><span class="event">Tobias C.</span></li>
-            </ul>
+                </ul>
+            </details>
         </div>
     </main>
 
