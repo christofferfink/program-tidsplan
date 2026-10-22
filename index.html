@@ -458,62 +458,16 @@
                 transform: translate(-50%, -50%) scale(1.15);
             }
 
-            /* Scenerne bliver til en filmstrimmel over og under skemaet */
+            /* Kun baggrundsvideoen spiller på mobil */
             .side-panel {
-                position: static;
-                transform: none;
-                width: auto;
-                display: grid;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: 10px;
-                padding: 0;
-                margin: 0 auto 16px;
-                max-width: 760px;
+                display: none;
             }
 
-            .side-panel.right {
-                margin: 16px auto 0;
-            }
-
-            .side-window {
-                min-height: 0;
-                aspect-ratio: 16 / 10;
-            }
-
-            .side-window iframe {
-                transform: scale(1.25);
-            }
-
-            .leader-num {
-                font-size: 2rem;
-            }
         }
 
         @media (max-width: 620px) {
             body {
                 padding: 16px 12px 28px;
-            }
-
-            .side-panel {
-                gap: 6px;
-                margin-bottom: 12px;
-            }
-
-            .side-panel.right {
-                margin-top: 12px;
-            }
-
-            .side-window {
-                aspect-ratio: 4 / 3;
-                border-radius: 6px;
-            }
-
-            .side-window iframe {
-                transform: scale(1.5);
-            }
-
-            .leader-num {
-                font-size: 1.5rem;
             }
 
             .poster {
@@ -592,19 +546,19 @@
         <aside class="side-panel left" aria-label="Film sidebar left">
             <div class="side-window">
                 <iframe
-                    src="https://www.youtube.com/embed/J7GY1Xg6X20?autoplay=1&mute=1&controls=0&loop=1&playlist=J7GY1Xg6X20&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
+                    data-src="https://www.youtube.com/embed/J7GY1Xg6X20?autoplay=1&mute=1&controls=0&loop=1&playlist=J7GY1Xg6X20&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
                     allow="autoplay; encrypted-media; picture-in-picture">
                 </iframe>
             </div>
             <div class="side-window">
                 <iframe
-                    src="https://www.youtube.com/embed/2TAfvMn8_EQ?autoplay=1&mute=1&controls=0&loop=1&playlist=2TAfvMn8_EQ&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
+                    data-src="https://www.youtube.com/embed/2TAfvMn8_EQ?autoplay=1&mute=1&controls=0&loop=1&playlist=2TAfvMn8_EQ&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
                     allow="autoplay; encrypted-media; picture-in-picture">
                 </iframe>
             </div>
             <div class="side-window">
                 <iframe
-                    src="https://www.youtube.com/embed/K6LKszIrDzo?autoplay=1&mute=1&controls=0&loop=1&playlist=K6LKszIrDzo&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
+                    data-src="https://www.youtube.com/embed/K6LKszIrDzo?autoplay=1&mute=1&controls=0&loop=1&playlist=K6LKszIrDzo&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
                     allow="autoplay; encrypted-media; picture-in-picture">
                 </iframe>
             </div>
@@ -673,19 +627,19 @@
         <aside class="side-panel right" aria-label="Film sidebar right">
             <div class="side-window">
                 <iframe
-                    src="https://www.youtube.com/embed/xnOLhXmhkyA?autoplay=1&mute=1&controls=0&loop=1&playlist=xnOLhXmhkyA&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
+                    data-src="https://www.youtube.com/embed/xnOLhXmhkyA?autoplay=1&mute=1&controls=0&loop=1&playlist=xnOLhXmhkyA&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
                     allow="autoplay; encrypted-media; picture-in-picture">
                 </iframe>
             </div>
             <div class="side-window">
                 <iframe
-                    src="https://www.youtube.com/embed/I_-VQfS4zAk?autoplay=1&mute=1&controls=0&loop=1&playlist=I_-VQfS4zAk&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
+                    data-src="https://www.youtube.com/embed/I_-VQfS4zAk?autoplay=1&mute=1&controls=0&loop=1&playlist=I_-VQfS4zAk&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
                     allow="autoplay; encrypted-media; picture-in-picture">
                 </iframe>
             </div>
             <div class="side-window">
                 <iframe
-                    src="https://www.youtube.com/embed/Y0PUCwniWpc?autoplay=1&mute=1&controls=0&loop=1&playlist=Y0PUCwniWpc&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
+                    data-src="https://www.youtube.com/embed/Y0PUCwniWpc?autoplay=1&mute=1&controls=0&loop=1&playlist=Y0PUCwniWpc&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
                     allow="autoplay; encrypted-media; picture-in-picture">
                 </iframe>
             </div>
@@ -693,6 +647,12 @@
     </div>
 
     <script>
+        // På mobil spiller kun baggrundsvideoen - scenerne skjules og deres videoer hentes aldrig
+        const isMobile = matchMedia('(max-width: 980px)').matches;
+        document.querySelectorAll('.side-window iframe').forEach(frame => {
+            if (!isMobile) frame.src = frame.dataset.src;
+        });
+
         const leaderNums = [];
         document.querySelectorAll('.side-window').forEach(win => {
             const leader = document.createElement('div');
@@ -711,7 +671,7 @@
 
         // Mobilbrowsere ignorerer ofte autoplay - start videoerne via YouTube-API'et,
         // og igen ved første tryk på skærmen, som altid tillader afspilning
-        const videos = document.querySelectorAll('iframe');
+        const videos = document.querySelectorAll('iframe[src]');
         const ytCommand = (frame, func) => frame.contentWindow.postMessage(
             JSON.stringify({ event: 'command', func, args: [] }), '*');
         const playAll = () => videos.forEach(frame => {
