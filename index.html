@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Program / Tidsplan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --font-display: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+            --font-body: "Barlow", Arial, Helvetica, sans-serif;
+        }
+    </style>
+    <style>
+        :root {
+            --bg: #f3f0eb;
+            --paper: #f8f5f1;
+            --panel: #fffdfb;
+            --ink: #ececec;
+            --muted: #a8a8a8;
+            --line: rgba(255, 255, 255, 0.1);
+            --accent: #bdbdbd;
+            --accent-soft: #d6d6d6;
+            --tag-bg: rgba(255, 255, 255, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            min-height: 100%;
+            font-family: var(--font-body);
+            background: #111;
+            color: var(--ink);
+        }
+
+        body {
+            position: relative;
+            padding: 42px 18px;
+            overflow-x: hidden;
+        }
+
+        .video-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-bg iframe {
+            position: absolute;
+            inset: -12% 0 -12% 0;
+            width: 100%;
+            height: 124%;
+            border: 0;
+            transform: scale(1.2);
+            filter: brightness(0.45) contrast(1.1) saturate(0.8);
+        }
+
+        /* Skjuler YouTubes titel/play-overlay de første sekunder */
+        @keyframes video-reveal {
+            to { opacity: 1; }
+        }
+
+        /* Film-nedtælling vist i scenerne mens videoerne starter */
+        @property --sweep {
+            syntax: "<angle>";
+            inherits: false;
+            initial-value: 0deg;
+        }
+
+        .leader {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            display: grid;
+            place-items: center;
+            background:
+                linear-gradient(rgba(255,255,255,0.25), rgba(255,255,255,0.25)) center / 100% 1px no-repeat,
+                linear-gradient(rgba(255,255,255,0.25), rgba(255,255,255,0.25)) center / 1px 100% no-repeat,
+                radial-gradient(circle, #3b3b3b, #121212 75%);
+            color: #f2f2f2;
+            font-family: Georgia, "Times New Roman", serif;
+            animation: leader-out 0.8s ease 6.5s forwards;
+        }
+
+        .leader-sweep {
+            position: absolute;
+            height: 78%;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.65);
+            box-shadow: 0 0 0 5px transparent, 0 0 0 7px rgba(255,255,255,0.3);
+            background: conic-gradient(rgba(255,255,255,0.22) var(--sweep), transparent var(--sweep));
+            animation: leader-sweep 1s linear infinite;
+        }
+
+        .leader-num {
+            position: relative;
+            font-size: 3rem;
+            font-weight: 700;
+            text-shadow: 0 0 6px rgba(0,0,0,0.6);
+        }
+
+        @keyframes leader-sweep {
+            to { --sweep: 360deg; }
+        }
+
+        @keyframes leader-out {
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        .video-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            background: rgba(17, 17, 17, 0.42);
+            pointer-events: none;
+        }
+
+        .page-shell {
+            position: relative;
+            z-index: 2;
+            max-width: 1280px;
+            margin: 0 auto;
+            min-height: 100%;
+        }
+
+        .side-panel {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 18px;
+            padding: 12px 0;
+            pointer-events: none;
+            opacity: 1;
+        }
+
+        .side-panel.left {
+            left: 0;
+        }
+
+        .side-panel.right {
+            right: 0;
+        }
+
+        .side-window {
+            min-height: 160px;
+            background: rgba(17, 17, 17, 0.42);
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .side-window::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.12), rgba(0,0,0,0.2)),
+                radial-gradient(circle at 50% 15%, rgba(255,255,255,0.1), transparent 35%);
+        }
+
+        .side-window iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            transform: scale(1.6);
+            filter: brightness(0.9) contrast(1.05) saturate(0.95);
+            opacity: 0;
+            animation: video-reveal 1s ease 6.5s forwards;
+        }
+
+        .side-window::after {
+            content: attr(data-label);
+            position: absolute;
+            left: 12px;
+            bottom: 12px;
+            font-size: 0.54rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .poster {
+            position: relative;
+            max-width: 760px;
+            margin: 0 auto;
+            background: rgba(14, 14, 14, 0.55);
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+        }
+
+        .header {
+            padding: 26px 24px 16px;
+            border-bottom: 2px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-family: var(--font-display);
+            font-size: clamp(2.6rem, 5vw, 3.8rem);
+            line-height: 1;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--ink);
+            font-weight: 400;
+        }
+
+        .subtitle {
+            margin-top: 10px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .content {
+            padding: 18px 20px 24px;
+        }
+
+        .hero-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
+            color: var(--ink);
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        .section-title {
+            margin: 18px 0 10px;
+            padding: 10px 12px;
+            color: var(--ink);
+            background: rgba(255,255,255,0.08);
+            border-left: 3px solid var(--accent);
+            border-radius: 0;
+            font-family: var(--font-display);
+            font-weight: 400;
+            font-size: 1.35rem;
+            line-height: 1.1;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 12px;
+        }
+
+        li {
+            display: grid;
+            grid-template-columns: 130px 1fr;
+            gap: 12px;
+            align-items: center;
+            padding: 11px 8px;
+            border-bottom: 1px solid var(--line);
+            background: rgba(255,255,255,0.02);
+        }
+
+        li:last-child {
+            border-bottom: none;
+        }
+
+        .time {
+            color: var(--accent-soft);
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 400;
+            letter-spacing: 0.06em;
+        }
+
+        .event {
+            color: var(--ink);
+            font-size: 1.02rem;
+            font-weight: 500;
+            line-height: 1.45;
+        }
+
+        .note {
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        .ticker {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            padding: 12px 14px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.14);
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .ticker .time {
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .ticker .event {
+            text-align: right;
+            color: var(--muted);
+        }
+
+        .movie-block {
+            position: relative;
+            margin-top: 18px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.12);
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .movie-block .video-wrap {
+            position: relative;
+            height: 180px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .movie-block iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            filter: brightness(0.55) contrast(1.12) saturate(0.8);
+            transform: scale(1.12);
+        }
+
+        .movie-caption {
+            padding: 12px 14px;
+            background: rgba(255,255,255,0.7);
+            border-top: 1px solid rgba(255,255,255,0.12);
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink);
+        }
+
+        .sponsor-tag {
+            position: absolute;
+            right: 12px;
+            top: 8px;
+            background: var(--tag-bg);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: var(--accent-soft);
+            font-size: 0.58rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 5px 8px;
+            border-radius: 999px;
+            line-height: 1;
+            z-index: 2;
+        }
+
+        @media (max-width: 980px) {
+            .side-panel {
+                position: static;
+                width: auto;
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 12px;
+                margin: 0 auto 18px;
+                max-width: 760px;
+            }
+
+            .side-window {
+                min-height: 110px;
+            }
+        }
+
+        @media (max-width: 620px) {
+            body {
+                padding: 24px 12px;
+            }
+
+            .header,
+            .content {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            li {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+
+            .ticker {
+                display: block;
+            }
+
+            .ticker .event {
+                text-align: left;
+                margin-top: 6px;
+            }
+
+            .side-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="video-bg">
+        <iframe
+            src="https://www.youtube.com/embed/P-pYiWGSN8w?autoplay=1&mute=1&controls=0&loop=1&playlist=P-pYiWGSN8w&rel=0&modestbranding=1"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            allowfullscreen>
+        </iframe>
+    </div>
+    <div class="video-overlay"></div>
+
+    <div class="page-shell">
+        <aside class="side-panel left" aria-label="Film sidebar left">
+            <div class="side-window">
+                <iframe
+                    src="https://www.youtube.com/embed/J7GY1Xg6X20?autoplay=1&mute=1&controls=0&loop=1&playlist=J7GY1Xg6X20&rel=0&modestbranding=1"
+                    allow="autoplay; encrypted-media; picture-in-picture">
+                </iframe>
+            </div>
+            <div class="side-window">
+                <iframe
+                    src="https://www.youtube.com/embed/2TAfvMn8_EQ?autoplay=1&mute=1&controls=0&loop=1&playlist=2TAfvMn8_EQ&rel=0&modestbranding=1"
+                    allow="autoplay; encrypted-media; picture-in-picture">
+                </iframe>
+            </div>
+            <div class="side-window">
+                <iframe
+                    src="https://www.youtube.com/embed/K6LKszIrDzo?autoplay=1&mute=1&controls=0&loop=1&playlist=K6LKszIrDzo&rel=0&modestbranding=1"
+                    allow="autoplay; encrypted-media; picture-in-picture">
+                </iframe>
+            </div>
+        </aside>
+
+        <main class="poster">
+        <header class="header">
+            <h1>Program / Tidsplan</h1>
+            <div class="subtitle">Aftenens lineup</div>
+        </header>
+
+        <div class="content">
+            <div class="hero-row">
+                <div class="hero-badge">Starter kl 18:00</div>
+            </div>
+
+            <ul>
+                <li>
+                    <span class="time">18:00</span>
+                    <span class="event"><a href="https://www.facebook.com/photo/?fbid=29117329014570475&set=gm.39485479204401341&idorvanity=274837322559017" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Mad - Sunday Gravy</a></span>
+                </li>
+            </ul>
+
+            <div class="section-title">Værelse-rundfart starter 19:30</div>
+            <ul>
+                <li><span class="time">19:30 - 19:35</span><span class="event">Christoffer Værelse</span></li>
+                <li><span class="time">19:35 - 19:40</span><span class="event">Helena Værelse</span></li>
+                <li><span class="time">19:40 - 19:45</span><span class="event">Tobias M. Værelse</span></li>
+                <li><span class="time">19:45 - 19:50</span><span class="event">Daniel Værelse</span></li>
+                <li><span class="time">19:50 - 19:55</span><span class="event">Jonathan Værelse</span></li>
+                <li><span class="time">19:55 - 20:00</span><span class="event">Carl Johann Værelse</span></li>
+                <li><span class="time">20:05 - 20:10</span><span class="event">Victor Værelse</span></li>
+                <li><span class="time">20:10 - 20:15</span><span class="event">Thor Værelse</span></li>
+                <li><span class="time">20:15 - 20:20</span><span class="event">Anton Værelse</span></li>
+                <li><span class="time">20:20 - 20:25</span><span class="event">Isabella Værelse</span></li>
+                <li><span class="time">20:25 - 20:30</span><span class="event">Tobias C. Værelse</span></li>
+                <li><span class="time">20:30 - 20:35</span><span class="event">Karl Emil Værelse</span></li>
+                <li><span class="time">20:35 - 20:40</span><span class="event">Jakob Værelse</span></li>
+                <li><span class="time">20:40 - 20:45</span><span class="event">Caroline Værelse</span></li>
+                <li><span class="time">20:45 - 20:50</span><span class="event">Alexander Værelse</span></li>
+            </ul>
+
+            <div class="ticker">
+                <span class="time">TDC</span>
+                <span class="sponsor-tag">sponsoreret af Helena &amp; Carl Johann</span>
+            </div>
+
+            <div class="section-title">vi starter med legene kl 21:00</div>
+            <ul>
+                <li><span class="time">45 min</span><span class="event">Caroline &amp; Tobias</span></li>
+                <li><span class="time">45 min</span><span class="event">Christoffer &amp; Jonathan</span></li>
+                <li>
+                    <span class="time">45 min</span>
+                    <span class="event">Helena &amp; Carl Johann 💵 <span class="note"></span></span>
+                </li>
+                <li><span class="time">45 min</span><span class="event">Thor &amp; Alexander</span></li>
+                <li><span class="time">45 min</span><span class="event">Anton &amp; Jakob</span></li>
+                <li><span class="time">45 min</span><span class="event">Daniel &amp; Victor</span></li>
+                <li><span class="time">45 min</span><span class="event">Isabella</span></li>
+                <li><span class="time">45 min</span><span class="event">Karl Emil</span></li>
+                <li><span class="time">45 min</span><span class="event">Tobias C.</span></li>
+            </ul>
+        </div>
+    </main>
+
+        <aside class="side-panel right" aria-label="Film sidebar right">
+            <div class="side-window">
+                <iframe
+                    src="https://www.youtube.com/embed/xnOLhXmhkyA?autoplay=1&mute=1&controls=0&loop=1&playlist=xnOLhXmhkyA&rel=0&modestbranding=1"
+                    allow="autoplay; encrypted-media; picture-in-picture">
+                </iframe>
+            </div>
+            <div class="side-window">
+                <iframe
+                    src="https://www.youtube.com/embed/I_-VQfS4zAk?autoplay=1&mute=1&controls=0&loop=1&playlist=I_-VQfS4zAk&rel=0&modestbranding=1"
+                    allow="autoplay; encrypted-media; picture-in-picture">
+                </iframe>
+            </div>
+            <div class="side-window">
+                <iframe
+                    src="https://www.youtube.com/embed/Y0PUCwniWpc?autoplay=1&mute=1&controls=0&loop=1&playlist=Y0PUCwniWpc&rel=0&modestbranding=1"
+                    allow="autoplay; encrypted-media; picture-in-picture">
+                </iframe>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        const leaderNums = [];
+        document.querySelectorAll('.side-window').forEach(win => {
+            const leader = document.createElement('div');
+            leader.className = 'leader';
+            leader.innerHTML = '<div class="leader-sweep"></div><span class="leader-num">6</span>';
+            win.append(leader);
+            leaderNums.push(leader.querySelector('.leader-num'));
+        });
+
+        let count = 6;
+        const countdown = setInterval(() => {
+            count--;
+            if (count < 1) return clearInterval(countdown);
+            leaderNums.forEach(num => num.textContent = count);
+        }, 1000);
+    </script>
+</body>
+</html>
