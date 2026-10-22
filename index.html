@@ -523,7 +523,7 @@
 <body>
     <div class="video-bg">
         <iframe
-            src="https://www.youtube.com/embed/P-pYiWGSN8w?autoplay=1&mute=1&controls=0&loop=1&playlist=P-pYiWGSN8w&rel=0&modestbranding=1"
+            src="https://www.youtube.com/embed/P-pYiWGSN8w?autoplay=1&mute=1&controls=0&loop=1&playlist=P-pYiWGSN8w&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
             allow="autoplay; encrypted-media; picture-in-picture"
             allowfullscreen>
         </iframe>
@@ -534,19 +534,19 @@
         <aside class="side-panel left" aria-label="Film sidebar left">
             <div class="side-window">
                 <iframe
-                    src="https://www.youtube.com/embed/J7GY1Xg6X20?autoplay=1&mute=1&controls=0&loop=1&playlist=J7GY1Xg6X20&rel=0&modestbranding=1"
+                    src="https://www.youtube.com/embed/J7GY1Xg6X20?autoplay=1&mute=1&controls=0&loop=1&playlist=J7GY1Xg6X20&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
                     allow="autoplay; encrypted-media; picture-in-picture">
                 </iframe>
             </div>
             <div class="side-window">
                 <iframe
-                    src="https://www.youtube.com/embed/2TAfvMn8_EQ?autoplay=1&mute=1&controls=0&loop=1&playlist=2TAfvMn8_EQ&rel=0&modestbranding=1"
+                    src="https://www.youtube.com/embed/2TAfvMn8_EQ?autoplay=1&mute=1&controls=0&loop=1&playlist=2TAfvMn8_EQ&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
                     allow="autoplay; encrypted-media; picture-in-picture">
                 </iframe>
             </div>
             <div class="side-window">
                 <iframe
-                    src="https://www.youtube.com/embed/K6LKszIrDzo?autoplay=1&mute=1&controls=0&loop=1&playlist=K6LKszIrDzo&rel=0&modestbranding=1"
+                    src="https://www.youtube.com/embed/K6LKszIrDzo?autoplay=1&mute=1&controls=0&loop=1&playlist=K6LKszIrDzo&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
                     allow="autoplay; encrypted-media; picture-in-picture">
                 </iframe>
             </div>
@@ -615,19 +615,19 @@
         <aside class="side-panel right" aria-label="Film sidebar right">
             <div class="side-window">
                 <iframe
-                    src="https://www.youtube.com/embed/xnOLhXmhkyA?autoplay=1&mute=1&controls=0&loop=1&playlist=xnOLhXmhkyA&rel=0&modestbranding=1"
+                    src="https://www.youtube.com/embed/xnOLhXmhkyA?autoplay=1&mute=1&controls=0&loop=1&playlist=xnOLhXmhkyA&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
                     allow="autoplay; encrypted-media; picture-in-picture">
                 </iframe>
             </div>
             <div class="side-window">
                 <iframe
-                    src="https://www.youtube.com/embed/I_-VQfS4zAk?autoplay=1&mute=1&controls=0&loop=1&playlist=I_-VQfS4zAk&rel=0&modestbranding=1"
+                    src="https://www.youtube.com/embed/I_-VQfS4zAk?autoplay=1&mute=1&controls=0&loop=1&playlist=I_-VQfS4zAk&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
                     allow="autoplay; encrypted-media; picture-in-picture">
                 </iframe>
             </div>
             <div class="side-window">
                 <iframe
-                    src="https://www.youtube.com/embed/Y0PUCwniWpc?autoplay=1&mute=1&controls=0&loop=1&playlist=Y0PUCwniWpc&rel=0&modestbranding=1"
+                    src="https://www.youtube.com/embed/Y0PUCwniWpc?autoplay=1&mute=1&controls=0&loop=1&playlist=Y0PUCwniWpc&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
                     allow="autoplay; encrypted-media; picture-in-picture">
                 </iframe>
             </div>
@@ -650,6 +650,20 @@
             if (count < 1) return clearInterval(countdown);
             leaderNums.forEach(num => num.textContent = count);
         }, 1000);
+
+        // Mobilbrowsere ignorerer ofte autoplay - start videoerne via YouTube-API'et,
+        // og igen ved første tryk på skærmen, som altid tillader afspilning
+        const videos = document.querySelectorAll('iframe');
+        const ytCommand = (frame, func) => frame.contentWindow.postMessage(
+            JSON.stringify({ event: 'command', func, args: [] }), '*');
+        const playAll = () => videos.forEach(frame => {
+            ytCommand(frame, 'mute');
+            ytCommand(frame, 'playVideo');
+        });
+
+        videos.forEach(frame => frame.addEventListener('load', () => setTimeout(playAll, 500)));
+        ['touchstart', 'click'].forEach(type =>
+            document.addEventListener(type, playAll, { once: true, passive: true }));
     </script>
 </body>
 </html>
