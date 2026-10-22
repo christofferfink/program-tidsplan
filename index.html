@@ -390,48 +390,132 @@
         }
 
         @media (max-width: 980px) {
+            /* Baggrundsvideoen dækker hele skærmen, også på højkant */
+            .video-bg iframe {
+                inset: auto;
+                top: 50%;
+                left: 50%;
+                width: max(100vw, 177.78vh);
+                height: max(56.25vw, 100vh);
+                transform: translate(-50%, -50%) scale(1.15);
+            }
+
+            /* Scenerne bliver til en filmstrimmel over og under skemaet */
             .side-panel {
                 position: static;
+                transform: none;
                 width: auto;
                 display: grid;
                 grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: 12px;
-                margin: 0 auto 18px;
+                gap: 10px;
+                padding: 0;
+                margin: 0 auto 16px;
                 max-width: 760px;
             }
 
+            .side-panel.right {
+                margin: 16px auto 0;
+            }
+
             .side-window {
-                min-height: 110px;
+                min-height: 0;
+                aspect-ratio: 16 / 10;
+            }
+
+            .side-window iframe {
+                transform: scale(1.25);
+            }
+
+            .leader-num {
+                font-size: 2rem;
             }
         }
 
         @media (max-width: 620px) {
             body {
-                padding: 24px 12px;
-            }
-
-            .header,
-            .content {
-                padding-left: 14px;
-                padding-right: 14px;
-            }
-
-            li {
-                grid-template-columns: 1fr;
-                gap: 6px;
-            }
-
-            .ticker {
-                display: block;
-            }
-
-            .ticker .event {
-                text-align: left;
-                margin-top: 6px;
+                padding: 16px 12px 28px;
             }
 
             .side-panel {
-                grid-template-columns: 1fr;
+                gap: 6px;
+                margin-bottom: 12px;
+            }
+
+            .side-panel.right {
+                margin-top: 12px;
+            }
+
+            .side-window {
+                aspect-ratio: 4 / 3;
+                border-radius: 6px;
+            }
+
+            .side-window iframe {
+                transform: scale(1.5);
+            }
+
+            .leader-num {
+                font-size: 1.5rem;
+            }
+
+            .poster {
+                border-radius: 8px;
+            }
+
+            .header {
+                padding: 20px 14px 14px;
+            }
+
+            h1 {
+                font-size: clamp(1.9rem, 9vw, 2.6rem);
+                letter-spacing: 0.06em;
+            }
+
+            .subtitle {
+                font-size: 0.68rem;
+                letter-spacing: 0.22em;
+            }
+
+            .content {
+                padding: 14px 12px 18px;
+            }
+
+            .hero-row {
+                margin-bottom: 12px;
+            }
+
+            .section-title {
+                margin: 16px 0 6px;
+                padding: 8px 10px;
+                font-size: 1.15rem;
+            }
+
+            /* Tid og navn bliver på samme linje, så listen ikke bliver for lang */
+            li {
+                grid-template-columns: 92px 1fr;
+                gap: 10px;
+                padding: 9px 4px;
+            }
+
+            .time {
+                font-size: 1rem;
+                letter-spacing: 0.03em;
+            }
+
+            .event {
+                font-size: 0.95rem;
+            }
+
+            .ticker {
+                flex-wrap: wrap;
+                gap: 8px;
+                padding: 10px 12px;
+            }
+
+            .sponsor-tag {
+                position: static;
+                white-space: normal;
+                line-height: 1.3;
             }
         }
     </style>
