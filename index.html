@@ -298,15 +298,20 @@
         }
 
         .fold > summary::after {
-            content: "+";
+            content: "Expand";
+            padding: 4px 9px;
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 999px;
             font-family: var(--font-body);
-            font-size: 1.3rem;
+            font-size: 0.62rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
             line-height: 1;
-            transition: transform 0.2s;
+            white-space: nowrap;
         }
 
         .fold[open] > summary::after {
-            transform: rotate(45deg);
+            content: "Collapse";
         }
 
         .fold-hint {
@@ -624,7 +629,7 @@
                 </li>
             </ul>
 
-            <details class="fold">
+            <details class="fold" open>
                 <summary class="section-title">Værelse-rundfart starter 19:30 <span class="fold-hint">15 værelser</span></summary>
                 <ul>
                 <li><span class="time">19:30 - 19:35</span><span class="event">Christoffer Værelse</span></li>
